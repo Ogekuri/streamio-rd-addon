@@ -66,6 +66,9 @@ jobs:
           platforms: ${{ matrix.platforms }}
           push: true
           outputs: type=image,name=target,annotation-index.org.opencontainers.image.description=My multi-arch image
+        env:                                         # Se il GITHUB_TOKEN non funziona, puoi utilizzare un Personal Access Token (PAT) con i permessi adeguati.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Un PAT può essere utilizzato al posto di GITHUB_TOKEN
+                                                     # Usa il PAT come token, scade il 26/11/2025
 
       - name: Notify success
         run: echo "Release created!"
