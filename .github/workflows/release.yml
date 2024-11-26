@@ -72,7 +72,9 @@ jobs:
                 "label": "Source Code"
               }]
             }' \
-          https://api.github.com/repos/${{ github.repository }}/packages
+          https://api.github.com/repos/${{ github.repository_owner }}/${{ github.repository }}/packages
+
+          # https://api.github.com/orgs/<org>/packages o https://api.github.com/repos/<owner>/<repo>/packages.
 
       - name: Notify success
         run: echo "Release created!"
