@@ -3,25 +3,35 @@ name: Release
 on:
   push:
     tags:
-      - 'v*'
+      - 'v*' # Attiva il workflow per qualsiasi tag che inizia con "v"
 
 jobs:
-  release:
+  create-release:
+    name: Create GitHub Release
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Python (se necessario)
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
+#      - name: Set up Python
+#        uses: actions/setup-python@v4
+#        with:
+#          python-version: '3.10'
 
       - name: Create GitHub Release
+        uses: actions/create-release@v1
         uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          files: |
-            path/to/artifacts/**
-
+          tag_name: ${{ github.ref_name }} # Nome del tag
+          release_name: Release ${{ github.ref_name }}
+          body: |
+            Release note for ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+            
       - name: Notify success
         run: echo "Release created!"
+
