@@ -16,12 +16,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-# non dobvrebbe servire
-#      - name: Set up Python
-#        uses: actions/setup-python@v4
-#        with:
-#          python-version: '3.10'
-
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         id: create_release
@@ -33,6 +27,17 @@ jobs:
           body_path: CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download auto-generated ZIP
+        run: curl -L -o ${{ github.ref_name }}.zip https://github.com/${{ github.repository }}/archive/refs/tags/${{ github.ref_name }}.zip
+
+      - name: Upload Asset
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create-release.outputs.upload_url }}
+          asset_path: .${{ github.ref_name }}.zip
+          asset_name: ${{ github.ref_name }}.zip
+          asset_content_type: application/zip
 
       - name: Notify success
         run: echo "Release created!"
