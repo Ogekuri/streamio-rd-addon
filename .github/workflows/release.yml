@@ -2,6 +2,7 @@ name: Release
 
 on:
   push:
+    branches: master
     tags:
       - 'v*' # Attiva il workflow per qualsiasi tag che inizia con "v"
 
@@ -14,6 +15,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+# non dobvrebbe servire
 #      - name: Set up Python
 #        uses: actions/setup-python@v4
 #        with:
@@ -21,17 +23,15 @@ jobs:
 
       - name: Create GitHub Release
         uses: actions/create-release@v1
-        uses: softprops/action-gh-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        id: create_release
         with:
-          tag_name: ${{ github.ref_name }} # Nome del tag
-          release_name: Release ${{ github.ref_name }}
-          body: |
-            Release note for ${{ github.ref_name }}
           draft: false
           prerelease: false
-            
+          tag_name: ${{ github.ref_name }} # Nome del tag
+          release_name: Release ${{ github.ref_name }}
+          body_path: CHANGELOG.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Notify success
         run: echo "Release created!"
-
