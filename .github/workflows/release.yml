@@ -49,7 +49,7 @@ jobs:
           curl -X PUT \
           -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
           -H "Content-Type: application/zip" \
-          --data-binary @$GITHUB_REF_NAME.zip \
+          --data-binary @./${{ github.ref_name }}.zip \
           "https://uploads.github.com/repos/${{ github.repository }}/packages/assets?name=${{ github.ref_name }}.zip"
 
       - name: Notify success
