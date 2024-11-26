@@ -35,7 +35,7 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: .${{ github.ref_name }}.zip
+          asset_path: ${{ github.ref_name }}.zip
           asset_name: ${{ github.ref_name }}.zip
           asset_content_type: application/zip
 
