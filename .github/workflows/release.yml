@@ -53,29 +53,54 @@ jobs:
       #     --data-binary @./${{ github.ref_name }}.zip \
       #     "https://uploads.github.com/repos/${{ github.repository }}/packages/assets?name=${{ github.ref_name }}.zip"
 
-      - name: Publish Generic Package
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Publish Generic Package
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   run: |
+      #     curl -X POST \
+      #     -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+      #     -H "Content-Type: application/vnd.github+json" \
+      #     -H "Content-Type: application/json" \
+      #     -d '{
+      #         "package_type": "generic",
+      #         "name": "${{ github.ref_name }}",
+      #         "package_version": {
+      #           "name": "${{ github.ref_name }}",
+      #           "description": "Package for release ${{ github.ref_name }}"
+      #         },
+      #         "files": [{
+      #           "path": "${{ github.ref_name }}.zip",
+      #           "label": "Package for release ${{ github.ref_name }}"
+      #         }]
+      #       }' \
+      #     https://api.github.com/repos/${{ github.repository_owner }}/${{ github.repository }}/packages
+
+      # Step 3: Autenticazione al Container Registry
+      - name: Authenticate to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      # Step 4: Push del pacchetto
+      - name: Push Generic Package
         run: |
-          curl -X POST \
-          -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-          -H "Content-Type: application/vnd.github+json" \
-          -d '{
-              "package_type": "generic",
-              "name": "${{ github.ref_name }}",
-              "version": {
-                "name": "${{ github.ref_name }}",
-                "description": "Package for release ${{ github.ref_name }}"
-              },
-              "files": [{
-                "path": "${{ github.ref_name }}.zip",
-                "label": "Source Code"
-              }]
+          curl -X PUT \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Content-Type: application/octet-stream" \
+            --data-binary @${{ github.ref_name }}.zip \
+            https://ghcr.io/v2/${{ github.repository_owner }}/${{ github.repository }}/manifests/${{ github.ref_name }}
+
+      # Step 5: Aggiunta di metadati al pacchetto
+      - name: Add package metadata
+        run: |
+          curl -X PATCH \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -d '{
+              "metadata": {
+                "description": "A generic package for version ${{ github.ref_name }}",
+                "version": "${{ github.ref_name }}"
+              }
             }' \
-          https://api.github.com/repos/${{ github.repository_owner }}/${{ github.repository }}/packages
-
-          # https://api.github.com/orgs/<org>/packages o https://api.github.com/repos/<owner>/<repo>/packages.
-
+            https://api.github.com/user/packages/container/${{ github.repository }}
 
       - name: Notify success
         run: echo "Release created!"
