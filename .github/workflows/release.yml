@@ -28,25 +28,29 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # - name: Debug Release Outputs
-      #   run: echo "Upload URL: ${{ steps.create_release.outputs.upload_url }}"
-
-      # - name: Debug Auto-Generated URL
-      #   run: echo "Download URL: https://github.com/${{ github.repository }}/archive/refs/tags/${{ github.ref_name }}.zip"
-
       - name: Download auto-generated ZIP
         run: curl -L -o ${{ github.ref_name }}.zip https://github.com/${{ github.repository }}/archive/refs/tags/${{ github.ref_name }}.zip
 
-      - name: Upload Asset
+      - name: Upload Asset on Release
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./${{ github.ref_name }}.zip
           asset_name: ${{ github.ref_name }}.zip
           asset_content_type: application/zip
+        env:                                         # Se il GITHUB_TOKEN non funziona, puoi utilizzare un Personal Access Token (PAT) con i permessi adeguati.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Un PAT può essere utilizzato al posto di GITHUB_TOKEN
+                                                     # Usa il PAT come token, scade il 26/11/2025
+                                                     
+      - name: Publish Package to GitHub Packages
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Se il GITHUB_TOKEN non funziona, puoi utilizzare un Personal Access Token (PAT) con i permessi adeguati. Un PAT può essere utilizzato al posto di GITHUB_TOKEN
-                                                    # Usa il PAT come token, scade il 26/11/2025
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          curl -X PUT \
+          -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Content-Type: application/zip" \
+          --data-binary @$GITHUB_REF_NAME.zip \
+          "https://uploads.github.com/repos/${{ github.repository }}/packages/assets?name=${{ github.ref_name }}.zip"
 
       - name: Notify success
         run: echo "Release created!"
