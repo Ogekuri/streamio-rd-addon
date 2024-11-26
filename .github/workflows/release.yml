@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      packages: write # Permessi per caricare pacchetti
 
     steps:
       - name: Checkout code
@@ -51,6 +52,34 @@ jobs:
           -H "Content-Type: application/zip" \
           --data-binary @./${{ github.ref_name }}.zip \
           "https://uploads.github.com/repos/${{ github.repository }}/packages/assets?name=${{ github.ref_name }}.zip"
+
+      # - name: Publish Package
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   run: |
+      #     curl -X POST \
+      #     -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+      #     -H "Content-Type: application/json" \
+      #     -d '{
+      #       "name": "${{ github.ref_name }}",
+      #       "tag": "${{ github.ref_name }}",
+      #       "metadata": {
+      #         "package_type": "generic",
+      #         "name": "${{ github.repository }}",
+      #         "description": "Package for release ${{ github.ref_name }}"
+      #       }
+      #     }' \
+      #     https://ghcr.io/v2/${{ github.repository }}/manifests/${{ github.ref_name }}
+
+      # - name: Upload Asset to Package
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   run: |
+      #     curl -X PUT \
+      #     -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+      #     -H "Content-Type: application/zip" \
+      #     --data-binary @${{ github.ref_name }}.zip \
+      #     https://ghcr.io/v2/${{ github.repository }}/blobs/uploads/
 
       - name: Notify success
         run: echo "Release created!"
