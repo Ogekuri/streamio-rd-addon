@@ -28,6 +28,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Release Outputs
+        run: echo "Upload URL: ${{ steps.create_release.outputs.upload_url }}"
+
       - name: Download auto-generated ZIP
         run: curl -L -o ${{ github.ref_name }}.zip https://github.com/${{ github.repository }}/archive/refs/tags/${{ github.ref_name }}.zip
 
@@ -38,6 +41,9 @@ jobs:
           asset_path: ./${{ github.ref_name }}.zip
           asset_name: ${{ github.ref_name }}.zip
           asset_content_type: application/zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Se il GITHUB_TOKEN non funziona, puoi utilizzare un Personal Access Token (PAT) con i permessi adeguati. Un PAT può essere utilizzato al posto di GITHUB_TOKEN
+                                                    # Usa il PAT come token, scade il 26/11/2025
 
       - name: Notify success
         run: echo "Release created!"
