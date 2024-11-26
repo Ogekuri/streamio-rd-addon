@@ -53,27 +53,19 @@ jobs:
       #     --data-binary @./${{ github.ref_name }}.zip \
       #     "https://uploads.github.com/repos/${{ github.repository_owner }}/${{ github.repository }}/packages/assets?name=${{ github.ref_name }}.zip"
 
-      - name: Publish Generic Package
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          curl -X POST \
-          -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-          -H "Content-Type: application/vnd.github+json" \
-          -H "Content-Type: application/json" \
-          -d '{
-              "package_type": "generic",
-              "name": "${{ github.ref_name }}",
-              "package_version": {
-                "name": "${{ github.ref_name }}",
-                "description": "Package for release ${{ github.ref_name }}"
-              },
-              "files": [{
-                "path": "${{ github.ref_name }}.zip",
-                "label": "Package for release ${{ github.ref_name }}"
-              }]
-            }' \
-          https://api.github.com/repos/${{ github.repository_owner }}/${{ github.repository }}/packages
+      # This workflow uses actions that are not certified by GitHub.
+      # They are provided by a third-party and are governed by
+      # separate terms of service, privacy policy, and support
+      # documentation.
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: ${{ matrix.platforms }}
+          push: true
+          outputs: type=image,name=target,annotation-index.org.opencontainers.image.description=My multi-arch image
 
       - name: Notify success
         run: echo "Release created!"
