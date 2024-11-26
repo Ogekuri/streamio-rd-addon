@@ -1,15 +1,15 @@
 # Changelog
 
-Elenco modifiche.
+Elenco modifiche introdotti in Stremio RD Addon
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+Il formato è basato su on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+e questo progetto aderisce a [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.0.1] - 2024-11-26
+## [v0.0.11] - 2024-11-26
 
-- Update
+- Modificata la home del progetto e aggiornati gli script.
 
-## [0.0.0] - 2022-11-26
+## [v0.0.10] - 2022-11-26
 
-- Update
+- Commit iniziale.
 

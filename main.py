@@ -17,8 +17,6 @@ from fastapi.templating import Jinja2Templates
 from starlette.responses import FileResponse
 
 from debrid.get_debrid_service import get_debrid_service
-# from jackett.jackett_result import JackettResult
-# from jackett.jackett_service import JackettService
 from search.search_result import SearchResult
 from search.search_service import SearchService
 from metdata.cinemeta import Cinemeta
@@ -46,9 +44,6 @@ app = FastAPI(root_path=root_path)
 VERSION = ADDON_VERSION
 
 environment = os.getenv("NODE_ENV", "DEVELOPMENT")
-
-# isDev = os.getenv("NODE_ENV") == "PRODUCTION"
-# COMMUNITY_VERSION = True if os.getenv("IS_COMMUNITY_VERSION") == "true" else False
 
 # class LogFilterMiddleware:
 #     def __init__(self, app):
