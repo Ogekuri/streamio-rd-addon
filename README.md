@@ -31,4 +31,4 @@ Stremio plugins per la ricerca diretta dei torrent sui provider di rierca online
 # Opzionale
 ## Utilizzo dei certificati
 
-Da implementare.
+Funzionalità ancora da implementare.
