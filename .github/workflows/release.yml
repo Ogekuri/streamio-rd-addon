@@ -28,8 +28,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Debug Release Outputs
-        run: echo "Upload URL: ${{ steps.create_release.outputs.upload_url }}"
+      # - name: Debug Release Outputs
+      #   run: echo "Upload URL: ${{ steps.create_release.outputs.upload_url }}"
 
       - name: Debug Auto-Generated URL
         run: echo "Download URL: https://github.com/${{ github.repository }}/archive/refs/tags/${{ github.ref_name }}.zip"
