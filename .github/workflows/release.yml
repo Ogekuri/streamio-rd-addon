@@ -43,32 +43,32 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Un PAT può essere utilizzato al posto di GITHUB_TOKEN
                                                      # Usa il PAT come token, scade il 26/11/2025
                                                      
-      # - name: Publish Package to GitHub Packages
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   run: |
-      #     curl -X PUT \
-      #     -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-      #     -H "Content-Type: application/zip" \
-      #     --data-binary @./${{ github.ref_name }}.zip \
-      #     "https://uploads.github.com/repos/${{ github.repository_owner }}/${{ github.repository }}/packages/assets?name=${{ github.ref_name }}.zip"
+      - name: Publish Package to GitHub Packages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          curl -X PUT \
+          -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Content-Type: application/zip" \
+          --data-binary @./${{ github.ref_name }}.zip \
+          "https://uploads.github.com/repos/${{ github.repository_owner }}/${{ github.repository }}/packages/assets?name=${{ github.ref_name }}.zip"
 
       # This workflow uses actions that are not certified by GitHub.
       # They are provided by a third-party and are governed by
       # separate terms of service, privacy policy, and support
       # documentation.
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
-        with:
-          context: .
-          file: ./Dockerfile
-          platforms: ${{ matrix.platforms }}
-          push: true
-          outputs: type=image,name=target,annotation-index.org.opencontainers.image.description=My multi-arch image
-        env:                                         # Se il GITHUB_TOKEN non funziona, puoi utilizzare un Personal Access Token (PAT) con i permessi adeguati.
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}  # Un PAT può essere utilizzato al posto di GITHUB_TOKEN
-                                                     # Usa il PAT come token, scade il 26/11/2025
+      # - name: Build and push Docker image
+      #   uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+      #   with:
+      #     context: .
+      #     file: ./Dockerfile
+      #     platforms: ${{ matrix.platforms }}
+      #     push: true
+      #     outputs: type=image,name=target,annotation-index.org.opencontainers.image.description=My multi-arch image
+      #   env:                                         # Se il GITHUB_TOKEN non funziona, puoi utilizzare un Personal Access Token (PAT) con i permessi adeguati.
+      #     GITHUB_TOKEN: ${{ secrets.GH_PAT }}  # Un PAT può essere utilizzato al posto di GITHUB_TOKEN
+      #                                                # Usa il PAT come token, scade il 26/11/2025
 
       - name: Notify success
         run: echo "Release created!"
