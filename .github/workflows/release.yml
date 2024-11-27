@@ -51,8 +51,8 @@ jobs:
 
       # repository name must be lowercase => Ogekuri -> ogekuri
       - name: Convert repository name to lowercase
-        id: lowername
-        run: echo "IMAGE_NAME=${{ github.repository }}" | tr '[:upper:]' '[:lower:]' | tee -a $GITHUB_ENV
+        run: |
+          echo "IMAGE_NAME_LC=${IMAGE_NAME,,}" >>${GITHUB_ENV}
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v2
@@ -65,7 +65,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+          images: "${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LC }}"
 
       - name: Build and push Docker image
         id: push
@@ -74,14 +74,14 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:v0.0.37
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LC }}:v0.0.37
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LC }}:latest
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v1
         with:
-          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LC }}
           subject-digest: ${{ steps.push.outputs.digest }}
           push-to-registry: true
 
