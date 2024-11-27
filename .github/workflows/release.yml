@@ -16,7 +16,7 @@ jobs:
       id-token: write
 
     steps:
-      - name: Checkout code from repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Create GitHub Release
@@ -46,11 +46,11 @@ jobs:
                                                      # Usa il PAT come token, scade il 26/11/2025
 
       - name: Log in to the Container registry
-      uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
-      with:
-        registry: ${{ env.REGISTRY }}
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
@@ -73,6 +73,9 @@ jobs:
           subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}
           subject-digest: ${{ steps.push.outputs.digest }}
           push-to-registry: true
+
+      - name: Notify success
+        run: echo "Release created!"
 
       # - name: Publish Package to GitHub Packages
       #   env:
@@ -101,5 +104,3 @@ jobs:
       #     GITHUB_TOKEN: ${{ secrets.GH_PAT }}  # Un PAT può essere utilizzato al posto di GITHUB_TOKEN
       #                                                # Usa il PAT come token, scade il 26/11/2025
 
-      - name: Notify success
-        run: echo "Release created!"
