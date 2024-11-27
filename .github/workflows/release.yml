@@ -2,7 +2,7 @@ name: Release
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}  # Nome del repository GitHub (user/repo)
+  IMAGE_NAME: ${{ github.repository | toLower }}  # Nome repository in minuscolo del repository GitHub (user/repo)
 
 on:
   push:
